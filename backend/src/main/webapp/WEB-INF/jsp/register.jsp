@@ -51,7 +51,7 @@ ServletUtils.consumeStatusAttributes(request, pageContext);
                             <textarea rows="10" cols="50" required="required" class="form-control" name="verificationKey" placeholder="Verification (Public) Key"></textarea>
                         </div>
 
-                        <input type="submit" class="btn btn-primary" value="Save" />
+                        <input type="submit" class="btn btn-primary" value="Register" />
                         <c:if test="${not empty success}">
                             <span class="label label-success">${success}</span>
                         </c:if>

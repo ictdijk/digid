@@ -19,12 +19,17 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.util.PriorityQueue;
 import java.util.UUID;
 
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import in.yagnyam.myid.utils.JsonUtils;
+import in.yagnyam.myid.utils.PemUtils;
+import in.yagnyam.myid.utils.SignUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -96,10 +101,25 @@ public class RegisterEndpoint {
     }
 
     // TODO: Handle all fields
-    private static BlockChainNode createBlockChainNode(Person person, PersonAuthorization authorization) {
-        BlockChainNode blockChainNode = new BlockChainNode();
-        blockChainNode.setPath(authorization.getPath());
-        return blockChainNode;
+    private static BlockChainNode createBlockChainNode(Person person, PersonAuthorization authorization) throws InternalServerErrorException {
+        try {
+            SigningKey key = fetchSigningKey();
+            PrivateKey privateKey = PemUtils.decodePrivateKey(key.getPrivateKey());
+            BlockChainNode blockChainNode = new BlockChainNode();
+            blockChainNode.setPath(authorization.getPath());
+            blockChainNode.setVerificationKey(authorization.getVerificationKey());
+            blockChainNode.setSigner("/root/" + key.getName());
+            blockChainNode.setDescription("Node for BSN: " + person.getBsn() + ". Hash is for BSN");
+            blockChainNode.setDataHashMd5(SignUtils.getHash(person.getBsn(), SignUtils.ALGORITHM_MD5));
+            blockChainNode.setDataHashSha256(SignUtils.getHash(person.getBsn(), SignUtils.ALGORITHM_SHA256));
+            String signData = blockChainNode.contentToSign();
+            blockChainNode.setSignatureMd5(SignUtils.getSignature(signData, SignUtils.ALGORITHM_MD5WithRSA, privateKey));
+            blockChainNode.setSignatureSha256(SignUtils.getSignature(signData, SignUtils.ALGORITHM_SHA256WithRSA, privateKey));
+            return blockChainNode;
+        } catch (GeneralSecurityException | IOException e) {
+            log.error("Failed to Sign " + person + " with authorization " + authorization, e);
+            throw new InternalServerErrorException("Failed to create Node for Block Chain");
+        }
     }
 
     private static RegistrationResponse createRegistrationResponse(Person person, PersonAuthorization authorization) {
@@ -132,6 +152,16 @@ public class RegisterEndpoint {
             log.warn("Failed to Post to BlockChain", e);
             throw new InternalServerErrorException("Failed to Post to BlockChain", e);
         }
+    }
+
+    private static SigningKey fetchSigningKey() throws InternalServerErrorException {
+        SigningKey key = ofy().load().type(SigningKey.class).first().now();
+        if (key == null) {
+            log.error("Key configuration is missing");
+            throw new InternalServerErrorException("Missing Configuration");
+        }
+        log.info("Signing Key => {}", key);
+        return key;
     }
 
 }

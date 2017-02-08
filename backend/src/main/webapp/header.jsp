@@ -17,14 +17,9 @@
 <c:set value="/resources/js/bootstrap/3.3.5/bootstrap.min.js" var="bootstrapJS" />
 <c:set value="/resources/js/jquery/2.1.4/jquery.min.js" var="jqueryJS" />
 <c:set value="/" var="homeURL" />
-<c:set value="/login" var="loginURL" />
+<c:set value="/register" var="registerURL" />
 
 <link href="${bootstrapCSS}" rel="stylesheet" />
 <link href="${faviconURL}" rel="icon" />
 <link href="${stickyFooterCSS}" rel="stylesheet" />
 <link href="${orangeCSS}" rel="stylesheet" />
-
-
-
-
- 

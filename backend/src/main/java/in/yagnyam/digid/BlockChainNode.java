@@ -1,5 +1,6 @@
 package in.yagnyam.digid;
 
+import in.yagnyam.myid.utils.StringUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,5 +26,13 @@ public class BlockChainNode {
     private String signatureSha256;
 
     private String signatureMd5;
+
+    public String contentToSign() {
+        return path
+                + StringUtils.nonNull(description)
+                + StringUtils.nonNull(dataHashSha256)
+                + StringUtils.nonNull(dataHashMd5)
+                + StringUtils.nonNull(verificationKey);
+    }
 
 }
