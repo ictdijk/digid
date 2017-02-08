@@ -44,7 +44,7 @@ pageContext.setAttribute("keys", SetupKeysServlet.allSigningKeys());
                                 <c:forEach var="i" items="${keys}">
                                     <tr>
                                         <td>${i.name}</td>
-                                        <td>${i.signingKey}</td>
+                                        <td>${i.privateKey}</td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

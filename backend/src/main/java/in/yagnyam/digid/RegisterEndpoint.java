@@ -95,7 +95,8 @@ public class RegisterEndpoint {
 
     private static PersonAuthorization createAuthorization(Person person, RegistrationRequest request) {
         PersonAuthorization authorization = new PersonAuthorization();
-        authorization.setAuthorizationId(UUID.randomUUID().toString());
+        // TODO: Only Alphabets allowed for now
+        authorization.setAuthorizationId(UUID.randomUUID().toString().replaceAll("-", ""));
         authorization.setPath("/person/" + authorization.getAuthorizationId());
         authorization.setDigid(person.getDigid());
         authorization.setRoles(request.getRoles());
@@ -160,6 +161,7 @@ public class RegisterEndpoint {
 
 
     private static void postToBlockChainViaApi(BlockChainNode blockChainNode) throws InternalServerErrorException {
+        log.info("Sending {} to BlockChain", blockChainNode);
         in.yagnyam.myid.nodeApi.model.BlockChainNode apiNode = new in.yagnyam.myid.nodeApi.model.BlockChainNode();
         apiNode.setPath(blockChainNode.getPath());
         apiNode.setPrivateKey(blockChainNode.getPrivateKey());
@@ -172,9 +174,9 @@ public class RegisterEndpoint {
         apiNode.setSignatureSha256(blockChainNode.getSignatureSha256());
         NodeApi nodeApi = AppConstants.getNodeApi();
         try {
-            nodeApi.postNode(apiNode);
+            nodeApi.postNode(apiNode).execute();
         } catch (IOException e) {
-            log.error("Failed to Post node to BlockChain");
+            log.error("Failed to Post node to BlockChain", e);
             throw new InternalServerErrorException("Failed to Post node to BlockChain", e);
         }
     }
