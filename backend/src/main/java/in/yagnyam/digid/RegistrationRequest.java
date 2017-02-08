@@ -12,10 +12,6 @@ import lombok.ToString;
 @ToString
 public class RegistrationRequest {
 
-    private String digid;
-
-    private String password;
-
     private List<String> roles;
 
     private String verificationKey;

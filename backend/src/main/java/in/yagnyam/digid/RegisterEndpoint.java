@@ -56,6 +56,10 @@ public class RegisterEndpoint {
         log.info("register(" + request + ")");
         Person person = fetchPerson(httpRequest);
         validateRegistrationRequest(request);
+        return registerPerson(person, request);
+    }
+
+    public static RegistrationResponse registerPerson(Person person, RegistrationRequest request) throws InternalServerErrorException {
         PersonAuthorization authorization = createAuthorization(person, request);
         postToBlockChain(createBlockChainNode(person, authorization));
         return createRegistrationResponse(person, authorization);
@@ -64,6 +68,11 @@ public class RegisterEndpoint {
     private static Person fetchPerson(HttpServletRequest httpRequest) throws UnauthorizedException {
         String digid = AuthenticationFilter.getUserName(httpRequest);
         String password = AuthenticationFilter.getPassword(httpRequest);
+        return fetchPerson(digid, password);
+    }
+
+
+    public static Person fetchPerson(String digid, String password) throws UnauthorizedException {
         Person person = ofy().load().key(Key.create(Person.class, digid)).now();
         if (person == null) {
             log.info("Invalid DigiD: {}", digid);

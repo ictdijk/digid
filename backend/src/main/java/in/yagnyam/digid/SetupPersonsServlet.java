@@ -64,7 +64,7 @@ public class SetupPersonsServlet extends HttpServlet {
 
     private static Date stringToDate(String dateValue) throws BadRequestException {
         try {
-            return new SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).parse(dateValue);
+            return new SimpleDateFormat("yyyy-mm-dd", Locale.getDefault()).parse(dateValue);
         } catch (ParseException e) {
             throw new BadRequestException("Invalid Date: " + dateValue, e);
         }

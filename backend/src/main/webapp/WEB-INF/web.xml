@@ -76,4 +76,25 @@
     </servlet-mapping>
 
 
+    <!-- Register -->
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>in.yagnyam.digid.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/validate-and-register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterJsp</servlet-name>
+        <jsp-file>/WEB-INF/jsp/register.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterJsp</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+
+
 </web-app>

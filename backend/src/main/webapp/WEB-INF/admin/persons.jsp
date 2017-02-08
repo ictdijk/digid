@@ -94,7 +94,7 @@ pageContext.setAttribute("persons", SetupPersonsServlet.allPersons());
 
                         <div class="form-group">
                             <label for="dob">DOB:</label>
-                            <input required="required" type="date" class="form-control" name="name" placeholder="Date of Birth"/>
+                            <input required="required" type="date" class="form-control" name="dob" placeholder="Date of Birth"/>
                         </div>
 
 
