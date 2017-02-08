@@ -19,6 +19,9 @@ public class BlockChainNode {
 
     private String dataHashMd5;
 
+    // TODO: Only for development
+    private String privateKey;
+
     private String verificationKey;
 
     private String signer;

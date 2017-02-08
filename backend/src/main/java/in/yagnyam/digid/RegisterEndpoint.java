@@ -27,6 +27,7 @@ import java.util.UUID;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import in.yagnyam.myid.nodeApi.NodeApi;
 import in.yagnyam.myid.utils.JsonUtils;
 import in.yagnyam.myid.utils.PemUtils;
 import in.yagnyam.myid.utils.SignUtils;
@@ -69,7 +70,7 @@ public class RegisterEndpoint {
 
     public static RegistrationResponse registerPerson(Person person, RegistrationRequest request) throws InternalServerErrorException {
         PersonAuthorization authorization = createAuthorization(person, request);
-        postToBlockChain(createBlockChainNode(person, authorization));
+        postToBlockChainViaApi(createBlockChainNode(person, authorization));
         return createRegistrationResponse(person, authorization);
     }
 
@@ -103,13 +104,13 @@ public class RegisterEndpoint {
         return authorization;
     }
 
-    // TODO: Handle all fields
     private static BlockChainNode createBlockChainNode(Person person, PersonAuthorization authorization) throws InternalServerErrorException {
         try {
             SigningKey key = fetchSigningKey();
             PrivateKey privateKey = PemUtils.decodePrivateKey(key.getPrivateKey());
             BlockChainNode blockChainNode = new BlockChainNode();
             blockChainNode.setPath(authorization.getPath());
+            blockChainNode.setPrivateKey(key.getPrivateKey());
             blockChainNode.setVerificationKey(authorization.getVerificationKey());
             blockChainNode.setSigner("/root/" + key.getName());
             blockChainNode.setDescription("Node for BSN: " + person.getBsn() + ". Hash is for BSN");
@@ -154,6 +155,27 @@ public class RegisterEndpoint {
         } catch (IOException e) {
             log.warn("Failed to Post to BlockChain", e);
             throw new InternalServerErrorException("Failed to Post to BlockChain", e);
+        }
+    }
+
+
+    private static void postToBlockChainViaApi(BlockChainNode blockChainNode) throws InternalServerErrorException {
+        in.yagnyam.myid.nodeApi.model.BlockChainNode apiNode = new in.yagnyam.myid.nodeApi.model.BlockChainNode();
+        apiNode.setPath(blockChainNode.getPath());
+        apiNode.setPrivateKey(blockChainNode.getPrivateKey());
+        apiNode.setVerificationKey(blockChainNode.getVerificationKey());
+        apiNode.setSigner(blockChainNode.getSigner());
+        apiNode.setDescription(blockChainNode.getDescription());
+        apiNode.setDataHashMd5(blockChainNode.getDataHashMd5());
+        apiNode.setDataHashSha256(blockChainNode.getDataHashSha256());
+        apiNode.setSignatureMd5(blockChainNode.getSignatureMd5());
+        apiNode.setSignatureSha256(blockChainNode.getSignatureSha256());
+        NodeApi nodeApi = AppConstants.getNodeApi();
+        try {
+            nodeApi.postNode(apiNode);
+        } catch (IOException e) {
+            log.error("Failed to Post node to BlockChain");
+            throw new InternalServerErrorException("Failed to Post node to BlockChain", e);
         }
     }
 
