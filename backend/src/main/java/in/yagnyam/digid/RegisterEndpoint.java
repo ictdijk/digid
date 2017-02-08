@@ -47,6 +47,9 @@ import static in.yagnyam.digid.RegisterEndpointValidations.validateRegistrationR
 @Slf4j
 public class RegisterEndpoint {
 
+    static {
+        StaticRegistrar.register();
+    }
 
     @ApiMethod(name = "me")
     public Person me(HttpServletRequest httpRequest) throws UnauthorizedException {

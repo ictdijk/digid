@@ -26,6 +26,9 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 @Slf4j
 public class SetupEndpoint {
 
+    static {
+        StaticRegistrar.register();
+    }
 
     @ApiMethod(name = "setup", httpMethod = ApiMethod.HttpMethod.POST)
     public List<Person> setup(User user) throws UnauthorizedException {
