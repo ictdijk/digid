@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class RegistrationRequest {
 
-    private List<String> roles;
+    private List<String> claims;
 
     private String verificationKey;
 }

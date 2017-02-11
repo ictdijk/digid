@@ -27,7 +27,7 @@ public class PersonAuthorization {
     @Index
     private String path;
 
-    private List<String> roles;
+    private List<String> claims;
 
     private String verificationKey;
 }

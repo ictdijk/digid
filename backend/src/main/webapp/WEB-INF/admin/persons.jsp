@@ -42,6 +42,10 @@ pageContext.setAttribute("persons", SetupPersonsServlet.allPersons());
                                     <th>BSN</th>
                                     <th>Name</th>
                                     <th>DOB</th>
+                                    <th>Blood Group</th>
+                                    <th>Refugee Status</th>
+                                    <th>Deaf</th>
+                                    <th>Dumb</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -52,6 +56,10 @@ pageContext.setAttribute("persons", SetupPersonsServlet.allPersons());
                                         <td>${i.bsn}</td>
                                         <td>${i.name}</td>
                                         <td>${i.dob}</td>
+                                        <td>${i.bloodGroup}</td>
+                                        <td>${i.refugeeStatus}</td>
+                                        <td>${i.deaf}</td>
+                                        <td>${i.dumb}</td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -97,6 +105,28 @@ pageContext.setAttribute("persons", SetupPersonsServlet.allPersons());
                             <input required="required" type="date" class="form-control" name="dob" placeholder="Date of Birth"/>
                         </div>
 
+
+                        <div class="form-group">
+                            <label for="bloodGroup">Blood Group:</label>
+                            <input required="required" type="text" class="form-control" name="bloodGroup" placeholder="Blood Group"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="refugeeStatus">Refugee Status:</label>
+                            <input required="required" type="text" class="form-control" name="refugeeStatus" placeholder="Refugee Status"/>
+                        </div>
+
+						
+                        <div class="form-group">
+                            <label for="deaf">Deaf:</label>
+                            <input required="required" type="text" class="form-control" name="deaf" placeholder="Is Deaf"/>
+                        </div>
+
+												
+                        <div class="form-group">
+                            <label for="dumb">Dumb:</label>
+                            <input required="required" type="text" class="form-control" name="dumb" placeholder="Is Dumb"/>
+                        </div>
 
                         <input type="submit" class="btn btn-primary" value="Save" />
                         <c:if test="${not empty success}">

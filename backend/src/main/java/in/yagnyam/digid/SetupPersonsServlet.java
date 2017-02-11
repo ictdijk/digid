@@ -43,6 +43,10 @@ public class SetupPersonsServlet extends HttpServlet {
             person.setBsn(ServletUtils.getMandatoryParameter(req, "bsn"));
             person.setName(ServletUtils.getMandatoryParameter(req, "name"));
             person.setDob(stringToDate(ServletUtils.getMandatoryParameter(req, "dob")));
+            person.setBloodGroup(ServletUtils.getMandatoryParameter(req, "bloodGroup"));
+            person.setRefugeeStatus(ServletUtils.getMandatoryParameter(req, "refugeeStatus"));
+            person.setDeaf(ServletUtils.getMandatoryParameter(req, "deaf"));
+            person.setDumb(ServletUtils.getMandatoryParameter(req, "dumb"));
             ofy().save().entity(person).now();
             log.info("Saved {}", person);
             ServletUtils.setSuccessAttribute(req, "Saved Successfully");

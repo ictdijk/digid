@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.UUID;
 
@@ -99,8 +100,8 @@ public class RegisterEndpoint {
         authorization.setAuthorizationId(UUID.randomUUID().toString().replaceAll("-", ""));
         authorization.setPath("/person/" + authorization.getAuthorizationId());
         authorization.setDigid(person.getDigid());
-        authorization.setRoles(request.getRoles());
         authorization.setVerificationKey(request.getVerificationKey());
+        authorization.setClaims(request.getClaims());
         ofy().save().entity(authorization).now();
         return authorization;
     }
@@ -114,9 +115,9 @@ public class RegisterEndpoint {
             blockChainNode.setPrivateKey(key.getPrivateKey());
             blockChainNode.setVerificationKey(authorization.getVerificationKey());
             blockChainNode.setSigner("/root/" + key.getName());
-            blockChainNode.setDescription("Node for BSN: " + person.getBsn() + ". Hash is for BSN");
-            blockChainNode.setDataHashMd5(SignUtils.getHash(person.getBsn(), SignUtils.ALGORITHM_MD5));
-            blockChainNode.setDataHashSha256(SignUtils.getHash(person.getBsn(), SignUtils.ALGORITHM_SHA256));
+            Map<String, String> claims = person.getClaims(authorization.getClaims());
+            blockChainNode.setDescription("Node for Content: " + maptToString(claims) + ". Only for DEMO");
+            blockChainNode.setClaims(claims);
             String signData = blockChainNode.contentToSign();
             blockChainNode.setSignatureMd5(SignUtils.getSignature(signData, SignUtils.ALGORITHM_MD5WithRSA, privateKey));
             blockChainNode.setSignatureSha256(SignUtils.getSignature(signData, SignUtils.ALGORITHM_SHA256WithRSA, privateKey));
@@ -127,6 +128,16 @@ public class RegisterEndpoint {
         }
     }
 
+    private static String maptToString(Map<String, String> map) {
+        StringBuilder sb = new StringBuilder();
+        if (map != null) {
+            for (Map.Entry<String, String> e : map.entrySet()) {
+                sb.append(e.getKey()).append(":").append(e.getValue()).append(' ');
+            }
+        }
+        return sb.toString();
+    }
+
     private static RegistrationResponse createRegistrationResponse(Person person, PersonAuthorization authorization) {
         RegistrationResponse response = new RegistrationResponse();
         response.setBsn(person.getBsn());
@@ -134,7 +145,10 @@ public class RegisterEndpoint {
         response.setDob(person.getDob());
         response.setDigid(person.getDigid());
         response.setPath(authorization.getPath());
-        response.setRoles(authorization.getRoles());
+        response.setBloodGroup(person.getBloodGroup());
+        response.setRefugeeStatus(person.getRefugeeStatus());
+        response.setDeaf(person.getDeaf());
+        response.setDumb(person.getDumb());
         return response;
     }
 
@@ -168,8 +182,8 @@ public class RegisterEndpoint {
         apiNode.setVerificationKey(blockChainNode.getVerificationKey());
         apiNode.setSigner(blockChainNode.getSigner());
         apiNode.setDescription(blockChainNode.getDescription());
-        apiNode.setDataHashMd5(blockChainNode.getDataHashMd5());
-        apiNode.setDataHashSha256(blockChainNode.getDataHashSha256());
+        apiNode.setDataHashMd5(blockChainNode.getClaimsHashMd5());
+        apiNode.setDataHashSha256(blockChainNode.getClaimsHashSha256());
         apiNode.setSignatureMd5(blockChainNode.getSignatureMd5());
         apiNode.setSignatureSha256(blockChainNode.getSignatureSha256());
         NodeApi nodeApi = AppConstants.getNodeApi();

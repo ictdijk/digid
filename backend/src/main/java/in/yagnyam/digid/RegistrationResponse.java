@@ -23,5 +23,12 @@ public class RegistrationResponse {
 
     private String path;
 
-    private List<String> roles;
+    private String bloodGroup;
+
+    private String refugeeStatus;
+
+    private String deaf;
+
+    private String dumb;
+
 }
